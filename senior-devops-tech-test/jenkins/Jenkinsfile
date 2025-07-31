@@ -13,9 +13,10 @@ pipeline {
   }
 
   stages {
-    stage('Checkout') {
+    stage('Git Checkout') {
       steps {
-        checkout scm
+        git branch: 'main',
+            url: 'https://github.com/bronandrews/NodeJs-Tech-Test.git'
       }
     }
 
@@ -32,7 +33,7 @@ pipeline {
         '''
       }
     }
-/* */
+/* * /
     stage('Mocked Unit Tests') {
       steps {
         sh '''
