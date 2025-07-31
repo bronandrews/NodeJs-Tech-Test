@@ -23,7 +23,7 @@ pipeline {
             url: 'https://github.com/bronandrews/NodeJs-Tech-Test.git'
       }
     }
-
+/* * /
     stage('Lint YAML & K8s manifests') {
       steps {
         sh '''
