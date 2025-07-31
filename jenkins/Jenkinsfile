@@ -47,7 +47,7 @@ pipeline {
         script {
           sh '''
             echo "Build Docker image: ${FULL_IMAGE_NAME}"
-            docker build -t ${FULL_IMAGE_NAME} .
+            docker build -t ${FULL_IMAGE_NAME} ./app
 
             echo "Login to ECR"
             aws ecr get-login-password --region ${AWS_REGION} | \
