@@ -23,7 +23,7 @@ pipeline {
             url: 'https://github.com/bronandrews/NodeJs-Tech-Test.git'
       }
     }
-/* * /
+/* */
     stage('Lint YAML & K8s manifests') {
       steps {
         sh '''
@@ -69,12 +69,12 @@ pipeline {
       steps {
         script {
           sh '''
-            echo "🚀 Updating image in Kubernetes deployment..."
-            kubectl set image deployment/my-node-app \
-              my-node-app=$FULL_IMAGE_NAME \
+            echo "Updating image in Kubernetes deployment..."
+            kubectl set image deployment/nodejs-app \
+              nodejs-app=$FULL_IMAGE_NAME \
               -n $NAMESPACE
 
-            echo "📄 Applying service and ingress..."
+            echo "Applying service and ingress..."
             kubectl apply -f k8s/service.yaml -n $NAMESPACE
             kubectl apply -f k8s/ingress.yaml -n $NAMESPACE
           '''
@@ -86,13 +86,13 @@ pipeline {
 
   post {
     success {
-      echo "✅ Pipeline completed successfully"
+      echo "Pipeline completed successfully"
       script {
         /* * /
         / Slack
         sh """
         curl -X POST -H 'Content-type: application/json' \
-        --data '{"text":"✅ Jenkins pipeline *succeeded* for build #${BUILD_NUMBER}"}' \
+        --data '{"text":"Jenkins pipeline *succeeded* for build #${BUILD_NUMBER}"}' \
         $SLACK_WEBHOOK_URL
         """
         /* */
@@ -103,12 +103,12 @@ pipeline {
       }
     }
     failure {
-      echo "❌ Pipeline failed"
+      echo "Pipeline failed"
       script {
         /* * /
         sh """
         curl -X POST -H 'Content-type: application/json' \
-        --data '{"text":"❌ Jenkins pipeline *failed* for build #${BUILD_NUMBER}"}' \
+        --data '{"text":"Jenkins pipeline *failed* for build #${BUILD_NUMBER}"}' \
         $SLACK_WEBHOOK_URL
         """
         /* */
