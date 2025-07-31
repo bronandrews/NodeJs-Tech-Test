@@ -3,7 +3,7 @@ pipeline {
 
   environment {
     AWS_REGION = 'eu-west-1'
-    ECR_REGISTRY = '184083913321.dkr.ecr.${AWS_REGION}.amazonaws.com'
+    ECR_REGISTRY = "184083913321.dkr.ecr.${AWS_REGION}.amazonaws.com"
     ECR_REPO = 'my-nodejs-app'
     IMAGE_TAG = "${env.BUILD_NUMBER}"
     FULL_IMAGE_NAME = "${ECR_REGISTRY}/${ECR_REPO}:${IMAGE_TAG}"
