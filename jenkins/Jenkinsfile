@@ -28,7 +28,7 @@ pipeline {
       steps {
         sh '''
           echo "Running yamllint..."
-          'PATH=$HOME/.local/bin:$PATH yamllint k8s/'
+          yamllint k8s/
         '''
       }
     }
