@@ -46,15 +46,15 @@ pipeline {
       steps {
         script {
           sh '''
-            echo "Build Docker image"
-            docker build -t $FULL_IMAGE_NAME .
+            echo "Build Docker image: ${FULL_IMAGE_NAME}"
+            docker build -t ${FULL_IMAGE_NAME} .
 
             echo "Login to ECR"
-            aws ecr get-login-password --region $AWS_REGION | \
-              docker login --username AWS --password-stdin $ECR_REGISTRY
+            aws ecr get-login-password --region ${AWS_REGION} | \
+              docker login --username AWS --password-stdin ${ECR_REGISTRY}
 
             echo "Pushing image to ECR"
-            docker push $FULL_IMAGE_NAME
+            docker push ${FULL_IMAGE_NAME}
           '''
         }
       }
@@ -66,7 +66,7 @@ pipeline {
           sh '''
             echo "Updating image in Kubernetes deployment..."
             kubectl set image deployment/nodejs-app \
-              nodejs-app=$FULL_IMAGE_NAME \
+              nodejs-app=${FULL_IMAGE_NAME} \
               -n $NAMESPACE
 
             echo "Applying service and ingress..."
