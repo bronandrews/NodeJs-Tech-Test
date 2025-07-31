@@ -1,3 +1,4 @@
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -20,7 +21,7 @@ spec:
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8000
-          #envFrom:
+          # envFrom:
           #  - configMapRef:
           #      name: nodejs-app-config
           #  - secretRef:

@@ -15,6 +15,10 @@ pipeline {
   stages {
     stage('Git Checkout') {
       steps {
+        sh '''
+          echo "Checkout from GitHub repo "
+        '''
+
         git branch: 'main',
             url: 'https://github.com/bronandrews/NodeJs-Tech-Test.git'
       }
@@ -23,10 +27,10 @@ pipeline {
     stage('Lint YAML & K8s manifests') {
       steps {
         sh '''
-          echo "🔍 Running yamllint..."
+          echo "Running yamllint..."
           yamllint k8s/
 
-          echo "🔍 Running kubeval..."
+          echo "Running kubeval..."
           for file in k8s/*.yaml; do
             kubeval --strict --kubernetes-version=1.26.0 "$file"
           done
@@ -37,7 +41,7 @@ pipeline {
     stage('Mocked Unit Tests') {
       steps {
         sh '''
-          echo "✅ Running mocked unit tests..."
+          echo "Running mocked unit tests..."
           echo "Tests passed."  # Replace with `npm test` if real tests are available
         '''
       }
