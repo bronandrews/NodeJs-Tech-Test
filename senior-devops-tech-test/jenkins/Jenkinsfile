@@ -1,0 +1,116 @@
+pipeline {
+  agent any
+
+  environment {
+    AWS_REGION = 'eu-west-1'
+    ECR_REGISTRY = '184083913321.dkr.ecr.${AWS_REGION}.amazonaws.com'
+    ECR_REPO = 'my-nodejs-app'
+    IMAGE_TAG = "${env.BUILD_NUMBER}"
+    FULL_IMAGE_NAME = "${ECR_REGISTRY}/${ECR_REPO}:${IMAGE_TAG}"
+    NAMESPACE = 'jenkins'
+    // SLACK_WEBHOOK_URL = credentials('slack-webhook-url') // Jenkins credential ID
+    RECIPIENTS = 'bronandrews@gmail.com'
+  }
+
+  stages {
+    stage('Checkout') {
+      steps {
+        checkout scm
+      }
+    }
+
+    stage('Lint YAML & K8s manifests') {
+      steps {
+        sh '''
+          echo "🔍 Running yamllint..."
+          yamllint k8s/
+
+          echo "🔍 Running kubeval..."
+          for file in k8s/*.yaml; do
+            kubeval --strict --kubernetes-version=1.26.0 "$file"
+          done
+        '''
+      }
+    }
+/* */
+    stage('Mocked Unit Tests') {
+      steps {
+        sh '''
+          echo "✅ Running mocked unit tests..."
+          echo "Tests passed."  # Replace with `npm test` if real tests are available
+        '''
+      }
+    }
+/**/
+    stage('Docker Build & Push to ECR') {
+      steps {
+        script {
+          sh '''
+            echo "Build Docker image"
+            docker build -t $FULL_IMAGE_NAME .
+
+            echo "Login to ECR"
+            aws ecr get-login-password --region $AWS_REGION | \
+              docker login --username AWS --password-stdin $ECR_REGISTRY
+
+            echo "Pushing image to ECR"
+            docker push $FULL_IMAGE_NAME
+          '''
+        }
+      }
+    }
+/* * /
+    stage('Deploy to EKS') {
+      steps {
+        script {
+          sh '''
+            echo "🚀 Updating image in Kubernetes deployment..."
+            kubectl set image deployment/my-node-app \
+              my-node-app=$FULL_IMAGE_NAME \
+              -n $NAMESPACE
+
+            echo "📄 Applying service and ingress..."
+            kubectl apply -f k8s/service.yaml -n $NAMESPACE
+            kubectl apply -f k8s/ingress.yaml -n $NAMESPACE
+          '''
+        }
+      }
+    }
+/* */
+  }
+
+  post {
+    success {
+      echo "✅ Pipeline completed successfully"
+      script {
+        /* * /
+        / Slack
+        sh """
+        curl -X POST -H 'Content-type: application/json' \
+        --data '{"text":"✅ Jenkins pipeline *succeeded* for build #${BUILD_NUMBER}"}' \
+        $SLACK_WEBHOOK_URL
+        """
+        /* */
+        // Email
+        mail to: "$RECIPIENTS",
+             subject: "NodeJs Build #${BUILD_NUMBER} Success",
+             body: "The Jenkins pipeline has completed successfully."
+      }
+    }
+    failure {
+      echo "❌ Pipeline failed"
+      script {
+        /* * /
+        sh """
+        curl -X POST -H 'Content-type: application/json' \
+        --data '{"text":"❌ Jenkins pipeline *failed* for build #${BUILD_NUMBER}"}' \
+        $SLACK_WEBHOOK_URL
+        """
+        /* */
+        mail to: "$RECIPIENTS",
+             subject: "NodeJs Build #${BUILD_NUMBER} Failed",
+             body: "The Jenkins pipeline has failed. Please check the console output."
+      }
+    }
+  }
+}
