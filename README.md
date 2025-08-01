@@ -1,6 +1,10 @@
-Considerations:
-I explained to Gary (Fox) that I have not previously worked with Kubernetes or EKS, but I was happy to turn my hand to it, researching and learning the basics, in order to complete this assignment. To that end, I have excluded any optional extras, and I fully acknowledge the files are likely at their most basic. However, I enjoyed working my way through it and gaining an understanding.
+# DevOps Tech Test - NodeJs app, run in EKS on AWS
 
+This project includes:
+  -- NodeJs docker image
+  -- Kubernetes deployment files, to deploy NodeJs image
+  -- AWS stack setup written in Terraform, creating resources VPC, IAM, ECR, EKS
+  -- Jenkins pipeline to that validates k8s, builds NodeJs container image, pushes to ECR and deploys to EKS
 
 
 Changes/Fixes:
@@ -8,34 +12,17 @@ Changes/Fixes:
 - Dockerfile port fix - EXPOSE 8000 (instead of 3000)
 
 
+# To run the Terraform
+## In AWS account - need to manually create bucket
 
--- Local Setup --
+## In each .\terraform sub-folder
+```bash
+terraform init -backend-config="..\NodeJs.tfbackend
+terraform plan -var-file="..\NodeJs.tfvars"
+terraform apply -var-file="..\NodeJs.tfvars"
+```
 
-Terminals:
-choco install nodejs      (also installs npm)
-choco install docker
-choco install docker-desktop    (configure, enable K8s & start docker daemon)
-wsl --update
-
-*** Test App runs:
-npm install               (installs modules & deps \node_modules for local .json)
-npm run start             (runs package.json start script - executes server.js)
-Browse to http://localhost:8000/  - confirm App runs correctly
-
-*** Test docker container runs:
-docker build . -t "nodejs-app"
-docker run -d -p 8000:8000 nodejs-app
-Browse to http://localhost:8000/  - confirm App running in container correctly
-
-*** Test K8s container runs:
-Create basic k8s deployment & service files:
-kubectl apply -f .\deployment.yaml
-kubectl apply -f .\service.yaml
-kubectl port-forward service/nodejs-app-service 8000:80
-Browse to http://localhost:8000/  - confirm App running in K8s container correctly
-
-*** Setup Jenkins server
-Use C:\BronA\Setups\JenkinsServer\Dockerfile - to create image
-docker build -t jenkins-server .
-docker run -d -p 8080:8080 -v jenkins_home:/var/jenkins_home jenkins-server
-docker exec -it <container-id> cat /var/jenkins_home/secrets/initialAdminPassword
+## Also
+Manually create Access Key for jenkins-ecr-user
+Create User/Password credentials in Jenkins for this user
+Configure Email SMTP server in Jenkins
