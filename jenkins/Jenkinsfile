@@ -7,6 +7,7 @@ pipeline {
     ECR_REPO = 'nodejs-app'
     IMAGE_TAG = "${env.BUILD_NUMBER}"
     FULL_IMAGE_NAME = "${ECR_REGISTRY}/${ECR_REPO}:${IMAGE_TAG}"
+    EKS_CLUSTER = 'nodejs-eks'
     NAMESPACE = 'jenkins'
     // SLACK_WEBHOOK_URL = credentials('slack-webhook-url') // Jenkins credential ID
     RECIPIENTS = 'bronandrews@gmail.com'
@@ -43,7 +44,7 @@ pipeline {
     }
 /**/
 
-    stage('Login to ECR') {
+    stage('Login to AWS') {
         steps {
             withCredentials([usernamePassword(credentialsId: 'jenkins-ecr-user', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
                 sh '''
@@ -70,18 +71,15 @@ pipeline {
       }
     }
 /* * /
-    stage('Deploy to EKS') {
+    stage('Connect to EKS') {
       steps {
         script {
           sh '''
-            echo "Updating image in Kubernetes deployment..."
-            kubectl set image deployment/nodejs-app \
-              nodejs-app=${FULL_IMAGE_NAME} \
-              -n $NAMESPACE
+            echo "Initialise kubeconfig to the EKS cluster..."
+            aws eks update-kubeconfig --region ${AWS_REGION} --name ${EKS_CLUSTER}
 
-            echo "Applying service and ingress..."
-            kubectl apply -f k8s/service.yaml -n $NAMESPACE
-            kubectl apply -f k8s/ingress.yaml -n $NAMESPACE
+            echo "Test kubectrl connection..."
+            kubectl get nodes
           '''
         }
       }
