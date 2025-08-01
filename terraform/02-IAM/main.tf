@@ -47,7 +47,7 @@ resource "aws_iam_user_policy" "jenkins_ecr_policy" {
       {
         Effect = "Allow"
         Action = "sts:AssumeRole"
-				Resource = "arn:aws:iam::184083913321:role/eks-cluster-role"      
+        Resource = "arn:aws:iam::184083913321:role/eks-cluster-role"      
       }
     ]
 

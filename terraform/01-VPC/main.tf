@@ -21,31 +21,31 @@ resource "aws_vpc" "main" {
 }
 
 resource "aws_subnet" "public1" {
-	vpc_id = aws_vpc.main.id
+  vpc_id = aws_vpc.main.id
   cidr_block = "10.0.1.0/24"
   availability_zone = var.networks_zones[0]
 
-	tags = {
-		Name = "${var.profile}-public-subnet1"
-	}
+  tags = {
+    Name = "${var.profile}-public-subnet1"
+  }
 }
 
 resource "aws_subnet" "public2" {
-	vpc_id = aws_vpc.main.id
+  vpc_id = aws_vpc.main.id
   cidr_block = "10.0.2.0/24"
   availability_zone = var.networks_zones[1]
 
-	tags = {
-		Name = "${var.profile}-public-subnet2"
-	}
+  tags = {
+    Name = "${var.profile}-public-subnet2"
+  }
 }
 
 resource "aws_internet_gateway" "internet" {
   vpc_id = aws_vpc.main.id
 
-	tags = {
-		Name = "${var.profile}-igw"
-	}
+  tags = {
+    Name = "${var.profile}-igw"
+  }
 }
 
 resource "aws_route_table" "route" {
