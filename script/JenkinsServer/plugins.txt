@@ -1,0 +1,17 @@
+# AWS & ECR
+amazon-ecr
+aws-credentials
+pipeline-aws
+
+# Kubernetes / EKS
+kubernetes
+
+# Slack notifications
+slack
+
+# Useful plugins
+git
+workflow-aggregator
+blueocean
+pipeline-stage-view
+mailer

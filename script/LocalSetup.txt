@@ -1,0 +1,41 @@
+-- Local Setup --
+
+choco install nodejs
+choco install docker
+choco install docker-desktop
+wsl --update
+
+
+*** Test the NodeJs App runs:
+npm install               (installs modules & deps \node_modules for local .json)
+npm run start             (runs package.json start script - executes server.js)
+Browse to http://localhost:8000/  - confirm App runs correctly
+
+
+*** Test NodeJs runs inside local docker container:
+docker build . -t "nodejs-app"
+docker run -d -p 8000:8000 nodejs-app
+Browse to http://localhost:8000/  - confirm App running in container correctly
+
+
+*** Test NodeJs runs inside local K8s container:
+Create basic k8s deployment & service files:
+kubectl apply -f .\deployment.yaml
+kubectl apply -f .\service.yaml
+kubectl port-forward service/nodejs-app-service 8000:80
+Browse to http://localhost:8000/  - confirm App running in K8s container correctly
+
+
+*** Setup Jenkins server & agent in docker container - see .\JenkinsServer\
+.\JenkinsServer\Dockerfile - creates image
+docker build -t jenkins-server .
+
+docker run --privileged -d -p 8080:8080 -v jenkins_home:/var/jenkins_home jenkins-server
+
+docker exec -it <container-id> cat /var/jenkins_home/secrets/initialAdminPassword
+
+dockerd &
+
+--- need to run this as jenkins user for kubectl connectivity to EKS cluster
+aws eks update-kubeconfig --region eu-west-1 --name nodejs-eks
+
