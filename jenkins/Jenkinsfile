@@ -73,8 +73,18 @@ pipeline {
 /* */
     stage('Connect to EKS') {
       steps {
+        withCredentials([[
+          $class: 'AmazonWebServicesCredentialsBinding',
+          credentialsId: 'jenkins-ecr-user'
+        ]]) {
+
         script {
           sh '''
+            echo "Assume EKS Cluster Role..."
+            aws sts assume-role \
+              --role-arn arn:aws:iam::184083913321:role/eks-cluster-role \
+              --role-session-name jenkins-session > /tmp/assumed-role.json
+
             echo "Initialise kubeconfig to the EKS cluster..."
             aws eks update-kubeconfig --region ${AWS_REGION} --name ${EKS_CLUSTER}
 
