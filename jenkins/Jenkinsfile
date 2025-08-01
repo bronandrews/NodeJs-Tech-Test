@@ -89,6 +89,7 @@ pipeline {
 /* */
   }
 
+/* * /
   post {
     success {
       echo "Pipeline completed successfully"
@@ -100,7 +101,7 @@ pipeline {
         --data '{"text":"Jenkins pipeline *succeeded* for build #${BUILD_NUMBER}"}' \
         $SLACK_WEBHOOK_URL
         """
-        /* */
+        /* * /
         // Email
         mail to: "$RECIPIENTS",
              subject: "NodeJs Build #${BUILD_NUMBER} Success",
@@ -116,11 +117,12 @@ pipeline {
         --data '{"text":"Jenkins pipeline *failed* for build #${BUILD_NUMBER}"}' \
         $SLACK_WEBHOOK_URL
         """
-        /* */
+        /* * /
         mail to: "$RECIPIENTS",
              subject: "NodeJs Build #${BUILD_NUMBER} Failed",
              body: "The Jenkins pipeline has failed. Please check the console output."
       }
     }
   }
+/* */
 }
