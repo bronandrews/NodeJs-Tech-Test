@@ -9,7 +9,6 @@ pipeline {
     FULL_IMAGE_NAME = "${ECR_REGISTRY}/${ECR_REPO}:${IMAGE_TAG}"
     EKS_CLUSTER = 'nodejs-eks'
     NAMESPACE = 'jenkins'
-    // SLACK_WEBHOOK_URL = credentials('slack-webhook-url') // Jenkins credential ID
     RECIPIENTS = 'bronandrews@gmail.com'
   }
 
@@ -95,41 +94,41 @@ pipeline {
         }
       }
     }
+
+    stage('Deploy to EKS') {
+      steps {
+        script {
+          sh '''
+            echo "Applying EKS deployment..."
+            kubectl apply -f k8s/deployment.yaml -n $NAMESPACE
+
+            echo "Applying EKS service..."
+            kubectl apply -f k8s/service.yaml -n $NAMESPACE
+          '''
+        }
+      }
+    }
 /* */
   }
 
-/* * /
+/* */
   post {
     success {
       echo "Pipeline completed successfully"
       script {
-        /* * /
-        / Slack
-        sh """
-        curl -X POST -H 'Content-type: application/json' \
-        --data '{"text":"Jenkins pipeline *succeeded* for build #${BUILD_NUMBER}"}' \
-        $SLACK_WEBHOOK_URL
-        """
-        /* * /
         // Email
         mail to: "$RECIPIENTS",
-             subject: "NodeJs Build #${BUILD_NUMBER} Success",
-             body: "The Jenkins pipeline has completed successfully."
+        subject: "NodeJs Build #${BUILD_NUMBER} Success",
+        body: "The Jenkins pipeline has completed successfully."
       }
     }
     failure {
       echo "Pipeline failed"
       script {
-        /* * /
-        sh """
-        curl -X POST -H 'Content-type: application/json' \
-        --data '{"text":"Jenkins pipeline *failed* for build #${BUILD_NUMBER}"}' \
-        $SLACK_WEBHOOK_URL
-        """
-        /* * /
+        // Email
         mail to: "$RECIPIENTS",
-             subject: "NodeJs Build #${BUILD_NUMBER} Failed",
-             body: "The Jenkins pipeline has failed. Please check the console output."
+        subject: "NodeJs Build #${BUILD_NUMBER} Failed",
+        body: "The Jenkins pipeline has failed. Please check the console output."
       }
     }
   }
