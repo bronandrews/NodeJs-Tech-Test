@@ -78,7 +78,6 @@ pipeline {
           credentialsId: 'jenkins-ecr-user'
         ]]) {
 
-        script {
           sh '''
             echo "Assume EKS Cluster Role..."
             aws sts assume-role \
