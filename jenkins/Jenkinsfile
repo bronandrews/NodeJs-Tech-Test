@@ -4,7 +4,7 @@ pipeline {
   environment {
     AWS_REGION = 'eu-west-1'
     ECR_REGISTRY = "184083913321.dkr.ecr.${AWS_REGION}.amazonaws.com"
-    ECR_REPO = 'my-nodejs-app'
+    ECR_REPO = 'nodejs-app'
     IMAGE_TAG = "${env.BUILD_NUMBER}"
     FULL_IMAGE_NAME = "${ECR_REGISTRY}/${ECR_REPO}:${IMAGE_TAG}"
     NAMESPACE = 'jenkins'
@@ -42,16 +42,26 @@ pipeline {
       }
     }
 /**/
+
+    stage('Login to ECR') {
+        steps {
+            withCredentials([usernamePassword(credentialsId: 'jenkins-ecr-user', usernameVariable: 'AWS_ACCESS_KEY_ID', passwordVariable: 'AWS_SECRET_ACCESS_KEY')]) {
+                sh '''
+                  aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+                  aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+                  aws configure set region $AWS_REGION
+                  aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_REGISTRY
+                '''
+            }
+        }
+    }
+
     stage('Docker Build & Push to ECR') {
       steps {
         script {
           sh '''
             echo "Build Docker image: ${FULL_IMAGE_NAME}"
             docker build -t ${FULL_IMAGE_NAME} ./app
-
-            echo "Login to ECR"
-            aws ecr get-login-password --region ${AWS_REGION} | \
-              docker login --username AWS --password-stdin ${ECR_REGISTRY}
 
             echo "Pushing image to ECR"
             docker push ${FULL_IMAGE_NAME}
