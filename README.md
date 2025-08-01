@@ -2,13 +2,13 @@
 NodeJs app, run in EKS on AWS
 
 ## This project includes:
-- NodeJs docker image
+- NodeJs dockerfile
 - Kubernetes deployment files, to deploy NodeJs image
 - AWS stack setup written in Terraform, creating resources VPC, IAM, ECR, EKS
-- Jenkins pipeline to that validates k8s, builds NodeJs container image, pushes to ECR and deploys to EKS
+- Jenkins pipeline that validates k8s, builds NodeJs docker image, pushes it to ECR and deploys to EKS
 
 ## To run the Terraform
-### In AWS account - need to manually create the S3 bucket to hold the state
+### In AWS account - need to manually create the S3 bucket to hold the tfstate
 
 ### In each .\terraform sub-folder
 ```bash
@@ -18,7 +18,10 @@ terraform apply
 ```
 
 ## Manual steps
-- Create job in Jenkins server linking to Jenkinsfile in this git repo
+### This assumes access to a live Jenkins server  
+### Note - Can use contents of .\script\LocalSetup.txt to create a local Jenkins running in docker
+
+- Need to create the job in Jenkins, linking to Jenkinsfile in this git repo
 - Manually create Access Key for jenkins-ecr-user - and link to User/Password credentials in Jenkins
 - Configure Email SMTP server in Jenkins
 - Configure Web hook to a Slack account
