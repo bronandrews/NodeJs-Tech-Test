@@ -70,7 +70,7 @@ pipeline {
         }
       }
     }
-/* * /
+/* */
     stage('Connect to EKS') {
       steps {
         script {
