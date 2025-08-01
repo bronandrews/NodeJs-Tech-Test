@@ -18,8 +18,7 @@ terraform apply
 ```
 
 ## Manual steps
-### This assumes access to a live Jenkins server  
-### Note - Can use contents of .\script\LocalSetup.txt to create a local Jenkins running in docker
+#### Note: This assumes access to a live Jenkins server. If not, can use details in .\script\LocalSetup.txt to create a local Jenkins running in docker
 
 - Need to create the job in Jenkins, linking to Jenkinsfile in this git repo
 - Manually create Access Key for jenkins-ecr-user - and link to User/Password credentials in Jenkins
