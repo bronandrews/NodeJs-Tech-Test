@@ -100,10 +100,10 @@ pipeline {
         script {
           sh '''
             echo "Applying EKS deployment..."
-            kubectl apply -f k8s/deployment.yaml -n $NAMESPACE
+            kubectl apply -f k8s/deployment.yaml
 
             echo "Applying EKS service..."
-            kubectl apply -f k8s/service.yaml -n $NAMESPACE
+            kubectl apply -f k8s/service.yaml
           '''
         }
       }
