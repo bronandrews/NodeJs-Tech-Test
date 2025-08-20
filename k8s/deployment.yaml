@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: nodejs-container
-          image: 184083913321.dkr.ecr.eu-west-1.amazonaws.com/nodejs-app
+          image: 184083913321.dkr.ecr.eu-west-1.amazonaws.com/nodejs-app:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8000
