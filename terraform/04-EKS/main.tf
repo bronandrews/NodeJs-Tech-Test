@@ -110,9 +110,7 @@ resource "aws_eks_node_group" "nodes" {
   ]
 }
 
-
-
-#####  Kubernetes Provider
+##### Kubernetes Provider
 provider "kubernetes" {
   host                   = aws_eks_cluster.eks.endpoint
   cluster_ca_certificate = base64decode(aws_eks_cluster.eks.certificate_authority[0].data)
@@ -123,7 +121,7 @@ data "aws_eks_cluster_auth" "eks" {
   name = aws_eks_cluster.eks.name
 }
 
-#####  aws-auth ConfigMap 
+##### Create aws-auth ConfigMap - for IAM access to the cluster
 resource "kubernetes_config_map" "aws_auth" {
   metadata {
     name      = "aws-auth"
