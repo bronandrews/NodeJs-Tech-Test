@@ -7,6 +7,7 @@ pipeline {
     ECR_REPO = 'nodejs-app'
     IMAGE_TAG = "${env.BUILD_NUMBER}"
     FULL_IMAGE_NAME = "${ECR_REGISTRY}/${ECR_REPO}:${IMAGE_TAG}"
+    LATEST_IMAGE_NAME = "${ECR_REGISTRY}/${ECR_REPO}:latest"
     EKS_CLUSTER = 'nodejs-eks'
     NAMESPACE = 'jenkins'
     RECIPIENTS = 'bronandrews@gmail.com'
@@ -65,8 +66,9 @@ pipeline {
             echo "Build Docker image: ${FULL_IMAGE_NAME}"
             docker build -t ${FULL_IMAGE_NAME} ./app
 
-            echo "Pushing image to ECR"
+            echo "Pushing image to ECR, include latest tag"
             docker push ${FULL_IMAGE_NAME}
+            docker push ${LATEST_IMAGE_NAME}
           '''
         }
       }
