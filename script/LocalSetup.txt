@@ -39,3 +39,10 @@ dockerd &
 --- need to run this as jenkins user for kubectl connectivity to EKS cluster
 aws eks update-kubeconfig --region eu-west-1 --name nodejs-eks
 
+
+*** local testing of EKS cluster (in Terminals as bronadmin user)
+aws eks update-kubeconfig --region eu-west-1 --name nodejs-eks
+aws eks list-clusters
+kubectl get svc
+kubectl get pods
+kubectl port-forward service/nodejs-app-service 8000:80
