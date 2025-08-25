@@ -72,7 +72,7 @@ resource "aws_iam_role_policy_attachment" "worker_node_ecr" {
 resource "aws_eks_cluster" "eks" {
   name     = "nodejs-eks"
   role_arn = aws_iam_role.eks_cluster_role.arn
-  version  = "1.29"
+  version  = "1.33"
 
   vpc_config {
     subnet_ids = data.aws_subnets.public.ids
